@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Piráti 2013 vs 2017</title>
+  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+  <script src="http://d3js.org/d3.v3.min.js"></script>
+  <script src="d3.tip.js"></script>
+  <style>
+    #chart {
+      height: 430px;/*502*/
+      width: 820px;/*900*/
+      /*border: 1px solid;*/
+      background-color: white;
+    }
+    circle {
+      fill: #888;
+      fill-opacity: 0.01;
+      stroke-opacity: 0.75;
+      stroke: #f00;
+    }
+    .group1{
+      stroke: black;
+    }
+    .green {
+      color: black;
+    }
+    .red {
+      color: #f00;
+    }
+    .stronger {
+      color: yellow;
+    }  
+    /* D3 tips */  
+    .d3-tip {
+      line-height: 1;
+      font-weight: bold;
+      padding: 12px;
+      background: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      border-radius: 2px;
+    }
+    /* Creates a small triangle extender for the tooltip */
+    /*.d3-tip:after {
+      box-sizing: border-box;
+      display: inline;
+      font-size: 10px;
+      width: 100%;
+      line-height: 1;
+      color: rgba(0, 0, 0, 0.8);
+      content: "\25BC";
+      position: absolute;
+      text-align: center;
+    }*/
+    /* Style northward tooltips differently */
+    .d3-tip.n:after {
+      margin: -1px 0 0 0;
+      top: 100%;
+      left: 0;
+    }  
+  </style>
+</head>
+<body>
+  <div class="navbar navbar-inverse" role="navigation">
+    <div class="container">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#">Piráti 2013 vs 2017</a>
+      </div>
+    </div>
+  </div>
+  <!-- chart -->
+  <p id="chart"></p>
+  <div class="alert alert-info" >
+    <strong>Velikost bubliny</strong> odpovídá počtu voličů, <strong>tloušťka kruhu</strong> ukazuje rozdíl porovnávaných hodnot.<br>
+    The <strong>size</strong> of bubbles represents number of voters, the <strong>ring width</strong> represents the difference.<br>
+	Podpořte Volební kalkulačku na <a href = "https://www.hithit.com/cs/project/4067/volebni-kalkulacka-on-steroids">HitHitu</a>
+  </div>
+
+  <script type="text/javascript">
+  //subcharts' specifications
+	//load specs from 
+	var specs = {
+      'lngMin': 12.156,
+      'lngMax': 18.84,
+      'latMin': 48.6,
+      'latMax': 51.023,
+      'max_population': 45000,
+      'max_size': 50,
+      'file': 'pirati.json',
+      'height': 430,
+      'width': 820,
+    };
+	// Chart dimensions.
+	var margin = {top: 10, right: 0, bottom: 0, left: 30},
+		width = specs.width - margin.right,
+		height = specs.height - margin.top - margin.bottom;
+	//Various scales. These domains make assumptions of data, naturally.
+	var 
+	xScale = d3.scale.linear()
+	  .domain([specs.lngMin, specs.lngMax])
+	  .range([0, width]),
+    yScale = d3.scale.linear()
+      .domain([specs.latMin, specs.latMax])
+      .range([height, 0]),
+    radiusScale = d3.scale.sqrt()
+      .domain([0, specs.max_population])
+      .range([0, specs.max_size]);
+      
+    /* Initialize tooltip */	
+    tip = d3.tip().attr('class', 'd3-tip').html(function(d) { 
+      return '<span class="stronger">' + d.title + '</span><br><br>2017: ' + d.votes1 + '<br>2013: ' + d.votes2;
+    });   
+
+// Create the SVG container and set the origin.
+var svg = d3.select("#chart").append("svg")
+	.attr("width", width + margin.left + margin.right)
+	.attr("height", height + margin.top + margin.bottom)
+  .append("g")
+	.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+	
+	/* Invoke the tip in the context of your visualization */
+    svg.call(tip);
+	
+	// Add tooltip div
+    var div = d3.select("body").append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 1e-6);
+		
+	// Load the data.
+	d3.json(specs.file, function(data) {
+	  nodes = data
+		.map(function(d) {
+		  return {
+			x: xScale(parseFloat(d.lng)),
+			y: yScale(parseFloat(d.lat)),
+			r: (radiusScale(d.votes[0])+radiusScale(d.votes[1]))/2,
+			r2: Math.abs(radiusScale(d.votes[0])-radiusScale(d.votes[1])),
+			title: d.town,
+			name: d.town,
+			id: d.id,
+			votes1: d.votes[0],
+			votes2: d.votes[1],
+			classname: compare(d.votes[0],d.votes[1])
+		  };
+		});
+	  var circle = svg.selectAll("circle")
+		.data(data);
+	
+	  var node = svg.selectAll("circle")
+	  		.data(nodes)
+		.enter().append("circle")
+			.attr("r",function(d) {
+			  return d.r;
+			})
+			.attr("stroke-width", function(d) {return d.r2;})
+			.attr("cx", function(d) {return d.x;})
+			.attr("cy", function(d) {return d.y;})
+			.attr("class", function(d) {return d.classname})
+			.on("mouseover", tip.show)
+			.on("mouseout", tip.hide);
+	});  
+
+function compare(a,b) {
+  if (a > b) return 'group1'; else return 'group2';
+}    	
+  </script>
+</body>
+</html>
