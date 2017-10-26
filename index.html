@@ -2,14 +2,14 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>KDU-ČSL vs. 10 %</title>
+  <title>ANO 2013 vs 2017</title>
   <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
   <script src="http://d3js.org/d3.v3.min.js"></script>
   <script src="d3.tip.js"></script>
   <style>
     #chart {
-      height: 325px;/*502*/
-      width: 620px;/*900*/
+      height: 430px;/*502*/
+      width: 820px;/*900*/
       /*border: 1px solid;*/
       background-color: white;
     }
@@ -20,10 +20,10 @@
       stroke: #f00;
     }
     .group1{
-      stroke: yellow;
+      stroke: teal;
     }
     .green {
-      color: yellow;
+      color: teal;
     }
     .red {
       color: #f00;
@@ -64,16 +64,16 @@
   <div class="navbar navbar-inverse" role="navigation">
     <div class="container">
       <div class="navbar-header">
-        <a class="navbar-brand" href="#"><span class="green">KDU-ČSL</span> vs. <span class="red">10 %</span> - Evropské volby 2014 - European Elections 2014</a>
+        <a class="navbar-brand" href="#">ANO 2013 vs 2017</a>
       </div>
     </div>
   </div>
   <!-- chart -->
   <p id="chart"></p>
   <div class="alert alert-info" >
-    <span class="green">KDU-ČSL &gt 10 %</span>; <span class="red">KDU-ČSL &lt 10 %</span><br>
     <strong>Velikost bubliny</strong> odpovídá počtu voličů, <strong>tloušťka kruhu</strong> ukazuje rozdíl porovnávaných hodnot.<br>
-    The <strong>size</strong> of bubbles represents number of voters, the <strong>ring width</strong> represents the difference.
+    The <strong>size</strong> of bubbles represents number of voters, the <strong>ring width</strong> represents the difference.<br>
+	Podpořte Volební kalkulačku na <a href = "https://www.hithit.com/cs/project/4067/volebni-kalkulacka-on-steroids">HitHitu</a>
   </div>
 
   <script type="text/javascript">
@@ -86,9 +86,9 @@
       'latMax': 51.023,
       'max_population': 45000,
       'max_size': 50,
-      'file': 'epcz_kdu-csl_10_2014.json',
-      'height': 325,
-      'width': 620,
+      'file': 'ano.json',
+      'height': 430,
+      'width': 820,
     };
 	// Chart dimensions.
 	var margin = {top: 10, right: 0, bottom: 0, left: 30},
@@ -108,7 +108,7 @@
       
     /* Initialize tooltip */	
     tip = d3.tip().attr('class', 'd3-tip').html(function(d) { 
-      return '<span class="stronger">' + d.title + '</span><br><br>KDU-ČSL: ' + d.votes1 + '<br>10 %: ' + d.votes2;
+      return '<span class="stronger">' + d.title + '</span><br><br>2017: ' + d.votes1 + '<br>2013: ' + d.votes2;
     });   
 
 // Create the SVG container and set the origin.
